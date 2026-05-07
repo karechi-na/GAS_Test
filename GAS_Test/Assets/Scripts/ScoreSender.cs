@@ -14,7 +14,8 @@ public class ScoreSender : MonoBehaviour
 
 	private IEnumerator SendScoreCoroutine(string playerName, int score)
 	{
-		string json = JsonUtility.ToJson(new ScoreData
+		Debug.Log("ëóêMäJén");
+        string json = JsonUtility.ToJson(new ScoreData
 		{
 			name = playerName,
 			score = score
@@ -25,8 +26,9 @@ public class ScoreSender : MonoBehaviour
 		byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
 		request.uploadHandler = new UploadHandlerRaw(bodyRaw);
 		request.downloadHandler = new DownloadHandlerBuffer();
+		request.SetRequestHeader("Content-Type", "application/json");
 
-		yield return request.SendWebRequest();
+        yield return request.SendWebRequest();
 
 		if (request.result == UnityWebRequest.Result.Success)
 		{

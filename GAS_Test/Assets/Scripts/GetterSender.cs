@@ -10,7 +10,7 @@ public class GetterSender : MonoBehaviour
 	{
 		if (Keyboard.current == null) return;
 
-		if (Keyboard.current.spaceKey.wasPressedThisFrame)
+		if (Keyboard.current.tabKey.wasPressedThisFrame)
 		{
 			rankingGetter.GetRanking();
 		}
