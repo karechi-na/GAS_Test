@@ -14,7 +14,7 @@ public abstract class SingletonMonobehaviour<T> : MonoBehaviour where T : MonoBe
                 instance = FindFirstObjectByType<T>();
 
                 if (instance == null)
-                    Debug.LogError("Ç»Ç¢ÇÊÅ[");
+                    Debug.LogError($"Ç»Ç¢ÇÊÅ[ {typeof(T).Name}");
             }
             return instance;
         }
