@@ -23,7 +23,7 @@ public class ScoreManager : SingletonMonobehaviour<ScoreManager>
     {
         base.Awake();
         // シーンを跨いでもスコアマネージャーが破壊されないようにする
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>

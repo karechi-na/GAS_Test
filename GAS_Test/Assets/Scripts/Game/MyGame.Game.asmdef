@@ -1,0 +1,16 @@
+{
+    "name": "MyGame.Game",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3c88f02b554915346ae8afe728f7189e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

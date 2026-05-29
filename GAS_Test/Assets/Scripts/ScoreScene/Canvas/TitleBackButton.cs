@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using MyGame.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -33,6 +33,6 @@ public class TitleBackButton : MonoBehaviour
     /// </summary>
     public void TitleBack()
     {
-        SceneManager.LoadScene(titleText);
+        GameSceneManager.LoadScene(titleText);
     }
 }
