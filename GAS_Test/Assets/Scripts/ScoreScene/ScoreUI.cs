@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using MyGame.SceneManagement;
 
 /// <summary>
 /// ScoreSenderにスコアを送信するためのUIクラス
@@ -12,6 +13,8 @@ public class ScoreUI : MonoBehaviour
     [Header("スコアを送信するためのScoreSender")]
     [SerializeField] private ScoreSender scoreSender = null;
 
+    private int sendScore = 0;
+
     // スコア送信中かどうかを管理するフラグ
     private bool isSending = false;
 
@@ -19,6 +22,9 @@ public class ScoreUI : MonoBehaviour
     {
         // InputFieldのonSubmitイベントにコールバックを登録
         nameInputField.onSubmit.AddListener(OnSubmitName);
+
+        if(GameSceneManager.TryGetData("score", out int score))
+            sendScore = score;
     }
 
     /// <summary>
@@ -54,8 +60,7 @@ public class ScoreUI : MonoBehaviour
         isSending = true;
 
         // スコアを送信
-        scoreSender.SendScore(playerName, ScoreManager.Instance.Score);
-        Debug.Log($"スコア送信: {playerName} - {ScoreManager.Instance.Score}");
+        scoreSender.SendScore(playerName, sendScore);
 
         nameInputField.text = ""; // 入力フィールドをクリア
 

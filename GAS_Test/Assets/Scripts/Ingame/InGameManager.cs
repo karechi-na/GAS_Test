@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using MyGame.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -136,6 +136,7 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     private void SceneChange()
     {
         // ƒV[ƒ“‘JˆÚ‚Ìˆ—
-        SceneManager.LoadScene(nextSceneName);
+        GameSceneManager.SetData("score", ScoreManager.Instance.Score);
+        GameSceneManager.LoadScene(nextSceneName);
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using MyGame.SceneManagement;
 
 
 #if UNITY_EDITOR
@@ -60,6 +60,6 @@ public class TitleSceneManager : MonoBehaviour
     /// </summary>
     public void Load()
     {
-        SceneManager.LoadScene(sceneName);
+        GameSceneManager.LoadScene(sceneName);
     }
 }

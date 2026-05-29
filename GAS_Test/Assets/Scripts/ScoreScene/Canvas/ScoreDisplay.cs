@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using MyGame.SceneManagement;
 
 /// <summary>
 /// スコア表示クラス
@@ -11,7 +12,16 @@ public class ScoreDisplay : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("Start！");
         // スコアを表示
-        scoreText.text = $"{ScoreManager.Instance.Score}";
+        if (GameSceneManager.TryGetData<int>("score", out int score))
+        {
+            Debug.Log($"確かに通りました:{score}");
+            scoreText.text = score.ToString() ;
+        }
+        else
+        {
+            scoreText.text = "Y";
+        }
     }
 }
