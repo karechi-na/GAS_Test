@@ -18,6 +18,8 @@ public class CollisionMonitoring : MonoBehaviour
             if (other.TryGetComponent(out Item item))
                 ScoreManager.Instance.AddScore(item.Point);
 
+            AudioManager.Instance.PlaySE("ppa");
+
             // アイテムをプールに戻す
             ItemPool.Instance.ReleaseItem(other.gameObject);
         }
