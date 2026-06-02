@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class ItemPool : SingletonMonobehaviour<ItemPool>
 {
+    private const float OFFSET_Y = 8.0f;
+
     [Header("アイテムのプレハブ")]
     [Tooltip("いずれはクラスそのものをGenericにして汎用的なクラスにしたいところ")]
     [SerializeField] private GameObject itemPrefab;
@@ -51,8 +53,7 @@ public class ItemPool : SingletonMonobehaviour<ItemPool>
         // 初期生成数文のアイテムを生成し、プールに登録しリストに追加
         for (int i = 0; i < initialPoolSize; i ++)
         {
-            GameObject item = itemPool.Get();
-            preloadItems.Add(item);
+            preloadItems.Add(itemPool.Get());
         }
         // 事前に生成したアイテムをプールに返す
         foreach (GameObject item in preloadItems) 
@@ -63,7 +64,7 @@ public class ItemPool : SingletonMonobehaviour<ItemPool>
 
     #region オブジェクトプールに登録するメソッド
     /// <summary>
-    /// オブジェクトが足りなくなった時に使割れるメソッド
+    /// オブジェクトが足りなくなった時に使われるメソッド
     /// </summary>
     private GameObject CreateItem()
     {
@@ -142,7 +143,7 @@ public class ItemPool : SingletonMonobehaviour<ItemPool>
     {
         return new Vector3(
             Random.Range(-5, 6), 
-            8.0f, 
+            OFFSET_Y, 
             0.0f
         );
     }

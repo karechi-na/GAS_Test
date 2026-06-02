@@ -4,9 +4,10 @@ using UnityEngine;
 /// <summary>
 /// ゲームのフェーズを表示するテキストを管理するクラス。
 /// </summary>
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class PhaseText : MonoBehaviour
 {
-    [Header("表示に使うテキスト")]
+    [Header("フェーズ表示に使うテキスト")]
     [SerializeField] private TextMeshProUGUI phaseText;
 
     #region イベント登録、解除
@@ -27,6 +28,11 @@ public class PhaseText : MonoBehaviour
     /// <param name="newPhase">新しいフェーズ</param>
     private void UpdatePhaseText(InGamePhase newPhase)
     {
-        phaseText.text = $"{newPhase}";
+        phaseText.text = newPhase.ToString();
+    }
+
+    private void Reset()
+    {
+        phaseText = GetComponent<TextMeshProUGUI>();
     }
 }

@@ -22,8 +22,6 @@ public class ScoreManager : SingletonMonobehaviour<ScoreManager>
     protected override void Awake()
     {
         base.Awake();
-        // シーンを跨いでもスコアマネージャーが破壊されないようにする
-        //DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>

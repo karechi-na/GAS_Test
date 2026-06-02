@@ -784,7 +784,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InGameManager
   sceneAsset: {fileID: 102900000, guid: 99c9720ab356a0642a771bea13969a05, type: 3}
   nextSceneName: SampleScene
-  remainingTime: 5
+  remainingTime: 60
   sceneChangeDelay: 2
 --- !u!1 &1623319972
 GameObject:

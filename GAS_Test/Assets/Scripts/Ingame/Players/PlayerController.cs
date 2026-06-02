@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// プレイヤーの移動を制御するクラス
 /// </summary>
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     /// <summary>
@@ -86,5 +87,10 @@ public class PlayerController : MonoBehaviour
         if (input.x > 0.5f) return Direction.Right;
         if (input.x < -0.5f) return Direction.Left;
         return Direction.Neutral;
+    }
+
+    private void Reset()
+    {
+        Rigidbody = GetComponent<Rigidbody>();
     }
 }
