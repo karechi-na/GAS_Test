@@ -4,9 +4,10 @@ using UnityEngine;
 /// <summary>
 /// スコアを表示するクラス
 /// </summary>
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class ScoreText : MonoBehaviour
 {
-    [Header("自身のTextMeshProUGUI")]
+    [Header("スコア表示に使うTextMeshProUGUI")]
     [SerializeField] private TextMeshProUGUI scoreText = null;
 
     #region イベント登録、解除
@@ -27,5 +28,10 @@ public class ScoreText : MonoBehaviour
     private void ScoreDisplay(int score)
     {
         scoreText.text = score.ToString();
+    }
+
+    private void Reset()
+    {
+        scoreText = GetComponent<TextMeshProUGUI>();
     }
 }

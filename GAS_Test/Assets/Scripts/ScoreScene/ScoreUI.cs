@@ -7,6 +7,8 @@ using MyGame.SceneManagement;
 /// </summary>
 public class ScoreUI : MonoBehaviour
 {
+    private const float INVOKE_DELAY = 0.1f; // 送信状態をリセットするための遅延時間
+
     [Header("名前を入力するInputField")]
     [SerializeField] private TMP_InputField nameInputField = null;
 
@@ -64,8 +66,8 @@ public class ScoreUI : MonoBehaviour
 
         nameInputField.text = ""; // 入力フィールドをクリア
 
-        Invoke(nameof(ResetSending), 0.1f); // 送信状態をリセットするためのタイマー
-        Invoke(nameof(ReActivateInputField), 0.1f); // 入力フィールドを再度アクティブにするためのタイマー
+        Invoke(nameof(ResetSending), INVOKE_DELAY); // 送信状態をリセットするためのタイマー
+        Invoke(nameof(ReActivateInputField), INVOKE_DELAY); // 入力フィールドを再度アクティブにするためのタイマー
     }
 
     /// <summary>

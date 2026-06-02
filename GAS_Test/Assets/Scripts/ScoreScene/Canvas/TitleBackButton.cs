@@ -12,18 +12,18 @@ public class TitleBackButton : MonoBehaviour
 {
 #if UNITY_EDITOR
     [Header("タイトルシーンのアセットを指定")]
-    [SerializeField] private SceneAsset titleScene; // タイトルシーンのアセットをインスペクターで指定
+    [SerializeField] private SceneAsset titleScene;
 #endif
 
     [SerializeField, HideInInspector]
-    private string titleText;
+    private string titleSceneName;
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
         if (titleScene != null)
         {
-            titleText = titleScene.name; // シーン名を取得してtitleTextに設定
+            titleSceneName = titleScene.name; // シーン名を取得してtitleSceneNameに設定
         }
     }
 #endif
@@ -33,6 +33,7 @@ public class TitleBackButton : MonoBehaviour
     /// </summary>
     public void TitleBack()
     {
-        GameSceneManager.LoadScene(titleText);
+        GameSceneManager.ClearData(); // シーン遷移前にデータをクリア
+        GameSceneManager.LoadScene(titleSceneName);
     }
 }

@@ -4,9 +4,10 @@ using UnityEngine;
 /// <summary>
 /// 残り時間を表示するのに使用するクラス
 /// </summary>
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class RemainingTime : MonoBehaviour
 {
-    [Header("表示に使うテキスト")]
+    [Header("残り時間表示に使うテキスト")]
     [SerializeField] private TextMeshProUGUI remainingTimeText;
     
     #region イベント登録、解除
@@ -32,5 +33,10 @@ public class RemainingTime : MonoBehaviour
             remainingTimeText.color = Color.red;
 
         remainingTimeText.text = time.ToString();
+    }
+
+    private void Reset()
+    {
+        remainingTimeText = GetComponent<TextMeshProUGUI>();
     }
 }
