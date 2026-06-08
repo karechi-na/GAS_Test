@@ -4,7 +4,12 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : SingletonMonobehaviour<AudioManager>
 {
-    [SerializeField] private AudioSource musicSource;
+    [Header("--- AudioSource ---")]
+    [Header("BGM—p")]
+    [SerializeField] private AudioSource bgmSource;
+    [Header("SE—p")]
+    [SerializeField] private AudioSource seSource;
+
 
     [Header("--- AudioClipData ---")]
     [Header("BGM")]
@@ -15,18 +20,45 @@ public class AudioManager : SingletonMonobehaviour<AudioManager>
     private Dictionary<string, AudioClip> bgmClips;
     private Dictionary<string, AudioClip> seClips;
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
         bgmClips = ConvertDictionary(bgmClipList);
         seClips = ConvertDictionary(seClipList);
     }
 
+    public void LoopPlayBGM(string key)
+    {
+        if (!bgmClips.TryGetValue(key, out AudioClip clip))
+        {
+            Debug.LogWarning($"BGM with key '{key}' not found.");
+            return;
+        }
+        bgmSource.clip = clip;
+        bgmSource.loop = true;
+        bgmSource.Play();
+    }
+
+    public void StopBGM()
+    {
+        bgmSource.Stop();
+    }
+
+    public void PauseBGM()
+    {
+        bgmSource.Pause();
+    }
+
+    public void UnPauseBGM()
+    {
+        bgmSource.UnPause();
+    }
 
     public void PlaySE(string key)
     {
         if (seClips.TryGetValue(key, out AudioClip clip))
         {
-            musicSource.PlayOneShot(clip);
+            seSource.PlayOneShot(clip);
         }
         else
         {
@@ -53,7 +85,7 @@ public class AudioManager : SingletonMonobehaviour<AudioManager>
 
     private void Reset()
     {
-        musicSource = GetComponent<AudioSource>();
+        bgmSource = GetComponent<AudioSource>();
     }
 
     [System.Serializable]

@@ -10,15 +10,10 @@ using UnityEditor;
 /// </summary>
 public class TitleBackButton : MonoBehaviour
 {
+    #region EditorOnly
 #if UNITY_EDITOR
     [Header("タイトルシーンのアセットを指定")]
     [SerializeField] private SceneAsset titleScene;
-#endif
-
-    [SerializeField, HideInInspector]
-    private string titleSceneName;
-
-#if UNITY_EDITOR
     private void OnValidate()
     {
         if (titleScene != null)
@@ -27,6 +22,10 @@ public class TitleBackButton : MonoBehaviour
         }
     }
 #endif
+    #endregion
+
+    [SerializeField, HideInInspector]
+    private string titleSceneName;
 
     /// <summary>
     /// ボタンのonClickイベントに対応する関数
@@ -34,6 +33,6 @@ public class TitleBackButton : MonoBehaviour
     public void TitleBack()
     {
         GameSceneManager.ClearData(); // シーン遷移前にデータをクリア
-        GameSceneManager.LoadScene(titleSceneName);
+        SceneTransitionManager.Instance.Load(titleSceneName);
     }
 }

@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace MyGame.SceneManagement
@@ -15,6 +16,11 @@ namespace MyGame.SceneManagement
         public static void LoadScene(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
+        }
+
+        public static AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
+        {
+            return SceneManager.LoadSceneAsync(sceneName, mode);
         }
         
         /// <summary>

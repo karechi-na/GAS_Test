@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using MyGame.SceneManagement;
+using System.Collections;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,15 +13,11 @@ using UnityEditor;
 /// </summary>
 public class InGameManager : SingletonMonobehaviour<InGameManager>
 {
+    #region EditorOnly
 #if UNITY_EDITOR
     [Header("シーン遷移設定")]
     [SerializeField] private SceneAsset sceneAsset;
-#endif
 
-    [SerializeField, HideInInspector]
-    private string nextSceneName;
-
-#if UNITY_EDITOR
     private void OnValidate()
     {
         if (sceneAsset != null)
@@ -28,10 +26,18 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
         }
     }
 #endif
+    #endregion
 
+    [SerializeField, HideInInspector]
+    private string nextSceneName;
+
+
+    private const float DEFAULT_TIME_SCALE = 1.0f;
     private const int PHASE_CHANGE_SCORE = 50; // フェーズが変わるスコアの間隔
+    private const string BGM_KEY = "BGM";
 
     // 各通知イベント
+    public event Action<string> OnCountDownChanged;     // カウントダウンのときにUIに通知する
     public event Action<InGamePhase> OnPhaseChanged;    // フェーズが変わったときに通知するイベント
     public event Action<int> OnTimeChanged;             // 時間が変わったときに通知するイベント
 
@@ -39,7 +45,7 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     [SerializeField] private float remainingTime = 0.0f;
 
     [Header("シーン遷移の遅延時間")]
-    [SerializeField] private float sceneChangeDelay = 2.0f;
+    [SerializeField] private float sceneChangeDelay = 1.5f;
 
     // 最後に表示した時間（秒）を記録する変数
     private int lastDisplayTime;
@@ -47,23 +53,18 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     // 現在のゲームフェーズを管理する変数
     private InGamePhase currentPhase = InGamePhase.Phase1;
 
-    private void Start()
-    {
-        // 初期フェーズと時間を通知
-        lastDisplayTime = Mathf.CeilToInt(remainingTime);
-        OnTimeChanged?.Invoke(lastDisplayTime);
-        OnPhaseChanged?.Invoke(currentPhase);
-    }
 
     #region イベント登録、解除
     private void OnEnable()
     {
         ScoreManager.Instance.OnScoreChange += PhaseCheck;
+        SceneTransitionManager.Instance.OnTransitionFinished += StartCountDown;
     }
 
     private void OnDisable()
     {
         ScoreManager.Instance.OnScoreChange -= PhaseCheck;
+        SceneTransitionManager.Instance.OnTransitionFinished -= StartCountDown;
     }
     #endregion
 
@@ -96,6 +97,42 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
             // シーン遷移の遅延時間を使用
             Invoke(nameof(SceneChange), sceneChangeDelay);
         }
+    }
+
+
+    private void StartCountDown()
+    {
+        StartCoroutine(CountDown());
+    }
+
+    private IEnumerator CountDown()
+    {
+        OnCountDownChanged?.Invoke("3");
+        yield return new WaitForSecondsRealtime(1.0f);
+
+        OnCountDownChanged?.Invoke("2");
+        yield return new WaitForSecondsRealtime(1.0f);
+
+        OnCountDownChanged?.Invoke("1");
+        yield return new WaitForSecondsRealtime(1.0f);
+
+        OnCountDownChanged.Invoke("START!");
+        yield return new WaitForSecondsRealtime(1.0f);
+
+        OnCountDownChanged?.Invoke("");
+        StartGame();
+    }
+
+    private void StartGame()
+    {
+        // 初期フェーズと時間を通知
+        lastDisplayTime = Mathf.CeilToInt(remainingTime);
+        OnTimeChanged?.Invoke(lastDisplayTime);
+        OnPhaseChanged?.Invoke(currentPhase);
+
+        AudioManager.Instance.LoopPlayBGM(BGM_KEY);
+
+        Time.timeScale = DEFAULT_TIME_SCALE;
     }
 
     /// <summary>
@@ -137,6 +174,6 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     {
         // シーン遷移の処理
         GameSceneManager.SetData("score", ScoreManager.Instance.Score);
-        GameSceneManager.LoadScene(nextSceneName);
+        SceneTransitionManager.Instance.Load(nextSceneName);
     }
 }
