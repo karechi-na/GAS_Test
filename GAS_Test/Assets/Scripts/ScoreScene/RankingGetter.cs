@@ -19,6 +19,7 @@ public class RankingGetter : MonoBehaviour
 	/// </summary>
     public void GetRanking()
 	{
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE); 
 		StartCoroutine(GetRankingCoroutine());
 	}
 

@@ -25,7 +25,7 @@ public class ScoreUI : MonoBehaviour
         // InputFieldのonSubmitイベントにコールバックを登録
         nameInputField.onSubmit.AddListener(OnSubmitName);
 
-        if(GameSceneManager.TryGetData("score", out int score))
+        if(GameSceneManager.TryGetData(SetData_Key.SCORE, out int score))
             sendScore = score;
     }
 
@@ -34,11 +34,13 @@ public class ScoreUI : MonoBehaviour
     /// </summary>
     private void OnSubmitName(string text)
     {
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
         SendScore();
     }
 
     public void OnClickSendButton()
     {
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
         SendScore();
     }
 
