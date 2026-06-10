@@ -23,6 +23,8 @@ public class AudioManager : SingletonMonobehaviour<AudioManager>
     protected override void Awake()
     {
         base.Awake();
+        DontDestroyOnLoad(gameObject);
+
         bgmClips = ConvertDictionary(bgmClipList);
         seClips = ConvertDictionary(seClipList);
     }

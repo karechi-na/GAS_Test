@@ -59,6 +59,7 @@ public class TitleSceneManager : MonoBehaviour
     /// </summary>
     private void LoadSceneAsync(InputAction.CallbackContext context)
     {
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
         SceneTransitionManager.Instance.Load(sceneName);
     }
 
@@ -67,6 +68,7 @@ public class TitleSceneManager : MonoBehaviour
     /// </summary>
     public void LoadSceneAsync()
     {
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
         SceneTransitionManager.Instance.Load(sceneName);
     }
 

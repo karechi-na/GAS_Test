@@ -11,6 +11,8 @@ public class CollisionMonitoring : MonoBehaviour
     // アイテムと衝突したときの処理
     private void OnTriggerEnter(Collider other)
     {
+        if (InGameManager.Instance.CurrentPhase == InGamePhase.Finished) return;
+
         // 衝突したオブジェクトがアイテムだったら
         if (other.CompareTag(ITEM_TAG))
         {
@@ -18,7 +20,7 @@ public class CollisionMonitoring : MonoBehaviour
             if (other.TryGetComponent(out Item item))
                 ScoreManager.Instance.AddScore(item.Point);
 
-            AudioManager.Instance.PlaySE("ppa");
+            AudioManager.Instance.PlaySE(SoundEffect_Key.COLLISION_SE);
 
             // アイテムをプールに戻す
             ItemPool.Instance.ReleaseItem(other.gameObject);

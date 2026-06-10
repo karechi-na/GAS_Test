@@ -32,6 +32,7 @@ public class TitleBackButton : MonoBehaviour
     /// </summary>
     public void TitleBack()
     {
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
         GameSceneManager.ClearData(); // シーン遷移前にデータをクリア
         SceneTransitionManager.Instance.Load(titleSceneName);
     }

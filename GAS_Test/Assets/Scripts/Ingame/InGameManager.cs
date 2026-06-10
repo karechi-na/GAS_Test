@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using MyGame.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
+
 
 
 #if UNITY_EDITOR
@@ -29,12 +31,13 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     #endregion
 
     [SerializeField, HideInInspector]
+    [Tooltip("シーンアセットの名前")]
     private string nextSceneName;
 
 
     private const float DEFAULT_TIME_SCALE = 1.0f;
     private const int PHASE_CHANGE_SCORE = 50; // フェーズが変わるスコアの間隔
-    private const string BGM_KEY = "BGM";
+    private const float COUNT_DOWN_TIME = 1.0f;
 
     // 各通知イベント
     public event Action<string> OnCountDownChanged;     // カウントダウンのときにUIに通知する
@@ -52,6 +55,16 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
 
     // 現在のゲームフェーズを管理する変数
     private InGamePhase currentPhase = InGamePhase.Phase1;
+    public InGamePhase CurrentPhase => currentPhase;
+
+    private Dictionary<CountDownPhase, string> countDownText = new()
+    {
+        { CountDownPhase.Three, "3"},
+        { CountDownPhase.Two, "2"},
+        { CountDownPhase.One, "1"},
+        { CountDownPhase.Start, "START"},
+        { CountDownPhase.Finish, "FINISH" }
+    };
 
 
     #region イベント登録、解除
@@ -94,6 +107,7 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
             currentPhase = InGamePhase.Finished;
             // フェーズが変わったことを通知
             OnPhaseChanged?.Invoke(currentPhase);
+            OnCountDownChanged?.Invoke(countDownText[CountDownPhase.Finish]);
             // シーン遷移の遅延時間を使用
             Invoke(nameof(SceneChange), sceneChangeDelay);
         }
@@ -107,17 +121,21 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
 
     private IEnumerator CountDown()
     {
-        OnCountDownChanged?.Invoke("3");
-        yield return new WaitForSecondsRealtime(1.0f);
+        OnCountDownChanged?.Invoke(countDownText[CountDownPhase.Three]);
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
+        yield return new WaitForSecondsRealtime(COUNT_DOWN_TIME);
 
-        OnCountDownChanged?.Invoke("2");
-        yield return new WaitForSecondsRealtime(1.0f);
+        OnCountDownChanged?.Invoke(countDownText[CountDownPhase.Two]);
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
+        yield return new WaitForSecondsRealtime(COUNT_DOWN_TIME);
 
-        OnCountDownChanged?.Invoke("1");
-        yield return new WaitForSecondsRealtime(1.0f);
+        OnCountDownChanged?.Invoke(countDownText[CountDownPhase.One]);
+        AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
+        yield return new WaitForSecondsRealtime(COUNT_DOWN_TIME);
 
-        OnCountDownChanged.Invoke("START!");
-        yield return new WaitForSecondsRealtime(1.0f);
+        OnCountDownChanged?.Invoke(countDownText[CountDownPhase.Start]);
+        AudioManager.Instance.PlaySE(SoundEffect_Key.START_SE);
+        yield return new WaitForSecondsRealtime(COUNT_DOWN_TIME);
 
         OnCountDownChanged?.Invoke("");
         StartGame();
@@ -130,7 +148,7 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
         OnTimeChanged?.Invoke(lastDisplayTime);
         OnPhaseChanged?.Invoke(currentPhase);
 
-        AudioManager.Instance.LoopPlayBGM(BGM_KEY);
+        AudioManager.Instance.LoopPlayBGM(SoundEffect_Key.INGAME_BGM);
 
         Time.timeScale = DEFAULT_TIME_SCALE;
     }
@@ -148,6 +166,7 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
         // ゲーム終了フェーズに達したら2秒後にシーン遷移
         if (currentPhase == InGamePhase.Finished)
         {
+            OnCountDownChanged?.Invoke(countDownText[CountDownPhase.Finish]);
             Invoke(nameof(SceneChange), sceneChangeDelay); // シーン遷移の遅延時間を使用
         }
     }
@@ -172,8 +191,21 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     /// </summary>
     private void SceneChange()
     {
+        AudioManager.Instance.StopBGM();
         // シーン遷移の処理
-        GameSceneManager.SetData("score", ScoreManager.Instance.Score);
+        GameSceneManager.SetData(SetData_Key.SCORE, ScoreManager.Instance.Score);
         SceneTransitionManager.Instance.Load(nextSceneName);
+    }
+
+    /// <summary>
+    /// カウントダウンの表示に使うDictionaryのキー
+    /// </summary>
+    private enum CountDownPhase
+    {
+        Three,
+        Two,
+        One,
+        Start,
+        Finish
     }
 }
