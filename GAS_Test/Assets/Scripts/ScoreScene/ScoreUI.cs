@@ -15,6 +15,7 @@ public class ScoreUI : MonoBehaviour
     [Header("スコアを送信するためのScoreSender")]
     [SerializeField] private ScoreSender scoreSender = null;
 
+    // GameSceneManagerに保存してあるscoreを受け取り表示するための変数
     private int sendScore = 0;
 
     // スコア送信中かどうかを管理するフラグ
@@ -25,6 +26,7 @@ public class ScoreUI : MonoBehaviour
         // InputFieldのonSubmitイベントにコールバックを登録
         nameInputField.onSubmit.AddListener(OnSubmitName);
 
+        // 保存してあるscoreを受け取り
         if(GameSceneManager.TryGetData(SetData_Key.SCORE, out int score))
             sendScore = score;
     }

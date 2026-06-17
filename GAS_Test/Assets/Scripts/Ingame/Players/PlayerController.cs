@@ -84,6 +84,7 @@ public class PlayerController : MonoBehaviour
     /// <returns>”»•Ê‚³‚ê‚½•ûŒü</returns>
     private Direction GetDirection(Vector2 input)
     {
+        // ¡‰ñ‚Í¶‰E‚Ì‚Ý”»•Ê
         if (input.x > 0.5f) return Direction.Right;
         if (input.x < -0.5f) return Direction.Left;
         return Direction.Neutral;

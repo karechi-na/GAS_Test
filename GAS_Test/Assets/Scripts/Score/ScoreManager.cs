@@ -19,11 +19,6 @@ public class ScoreManager : SingletonMonobehaviour<ScoreManager>
     /// </summary>
     public event Action<int> OnScoreChange;
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     /// <summary>
     /// プレイヤーがアイテムを取得すると呼ばれる
     /// </summary>

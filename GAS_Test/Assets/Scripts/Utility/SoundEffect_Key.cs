@@ -1,3 +1,6 @@
+/// <summary>
+/// SEのキーを保持するクラス
+/// </summary>
 public static class SoundEffect_Key
 {
     public static readonly string COLLISION_SE = "ppa";

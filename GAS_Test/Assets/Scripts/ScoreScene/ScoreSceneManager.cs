@@ -7,6 +7,12 @@ public class ScoreSceneManager : MonoBehaviour
 {
     private const float DEFAULT_TIME_SCALE = 1.0f;
 
+
+    private void Start()
+    {
+        Debug.Log(Time.timeScale);
+    }
+
     #region イベント登録、解除
     private void OnEnable()
     {

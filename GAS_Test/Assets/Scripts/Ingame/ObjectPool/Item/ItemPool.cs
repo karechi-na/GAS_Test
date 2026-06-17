@@ -9,6 +9,9 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class ItemPool : SingletonMonobehaviour<ItemPool>
 {
+    /// <summary>
+    /// Y座標オフセット
+    /// </summary>
     private const float OFFSET_Y = 8.0f;
 
     [Header("アイテムのプレハブ")]
