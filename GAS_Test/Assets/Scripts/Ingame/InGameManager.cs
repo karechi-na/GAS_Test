@@ -4,8 +4,6 @@ using MyGame.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -34,15 +32,23 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     [Tooltip("シーンアセットの名前")]
     private string nextSceneName;
 
-
     private const float DEFAULT_TIME_SCALE = 1.0f;
-    private const int PHASE_CHANGE_SCORE = 50; // フェーズが変わるスコアの間隔
+    private const int PHASE_CHANGE_INTERVAL = 50;
     private const float COUNT_DOWN_TIME = 1.0f;
 
     // 各通知イベント
-    public event Action<string> OnCountDownChanged;     // カウントダウンのときにUIに通知する
-    public event Action<InGamePhase> OnPhaseChanged;    // フェーズが変わったときに通知するイベント
-    public event Action<int> OnTimeChanged;             // 時間が変わったときに通知するイベント
+    /// <summary>
+    /// カウントダウンのときにUIに通知する
+    /// </summary>
+    public event Action<string> OnCountDownChanged;
+    /// <summary>
+    /// フェーズが変わったときに通知するイベント
+    /// </summary>
+    public event Action<InGamePhase> OnPhaseChanged;
+    /// <summary>
+    /// 時間が変わったときに通知するイベント
+    /// </summary>
+    public event Action<int> OnTimeChanged;
 
     [Header("ゲームプレイ時間設定")]
     [SerializeField] private float remainingTime = 0.0f;
@@ -57,6 +63,9 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     private InGamePhase currentPhase = InGamePhase.Phase1;
     public InGamePhase CurrentPhase => currentPhase;
 
+    /// <summary>
+    /// カウントダウンの状況に応じてtextを変化させるためのDictionary
+    /// </summary>
     private Dictionary<CountDownPhase, string> countDownText = new()
     {
         { CountDownPhase.Three, "3"},
@@ -114,13 +123,21 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     }
 
 
+    /// <summary>
+    /// ゲーム開始までのカウントダウンコルーチンを開始するメソッド
+    /// </summary>
     private void StartCountDown()
     {
         StartCoroutine(CountDown());
     }
 
+    /// <summary>
+    /// カウントダウンコルーチン
+    /// </summary>
     private IEnumerator CountDown()
     {
+        // Time.timeScaleが0のタイミングで使用するので
+        // WaitForSecondsではなくWaitForSecondsRealTimeを使用
         OnCountDownChanged?.Invoke(countDownText[CountDownPhase.Three]);
         AudioManager.Instance.PlaySE(SoundEffect_Key.SUBMIT_SE);
         yield return new WaitForSecondsRealtime(COUNT_DOWN_TIME);
@@ -141,15 +158,22 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
         StartGame();
     }
 
+    /// <summary>
+    /// Startメソッドではなくこちらでカウントダウンが終了後に実行
+    /// </summary>
     private void StartGame()
     {
         // 初期フェーズと時間を通知
         lastDisplayTime = Mathf.CeilToInt(remainingTime);
+
+        // 最初の各UIの状態を通知
         OnTimeChanged?.Invoke(lastDisplayTime);
         OnPhaseChanged?.Invoke(currentPhase);
 
+        // BGMプレイ開始
         AudioManager.Instance.LoopPlayBGM(SoundEffect_Key.INGAME_BGM);
 
+        //Time.timeScaleを基に戻す
         Time.timeScale = DEFAULT_TIME_SCALE;
     }
 
@@ -159,7 +183,7 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     private void PhaseCheck(int newScore)
     {
         // スコアが50点ごとにフェーズを変更
-        if (newScore % PHASE_CHANGE_SCORE != 0) return;
+        if (newScore % PHASE_CHANGE_INTERVAL != 0) return;
 
         // ゲーム終了フェーズに達している場合はこれ以上フェーズを進めない
         NextPhase();
@@ -191,6 +215,7 @@ public class InGameManager : SingletonMonobehaviour<InGameManager>
     /// </summary>
     private void SceneChange()
     {
+        // BGMを停止
         AudioManager.Instance.StopBGM();
         // シーン遷移の処理
         GameSceneManager.SetData(SetData_Key.SCORE, ScoreManager.Instance.Score);

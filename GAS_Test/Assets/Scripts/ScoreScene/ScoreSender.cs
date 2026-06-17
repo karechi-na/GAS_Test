@@ -1,8 +1,8 @@
-using System.Collections;
 using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 /// スコアをGoogle Apps Scriptに送信するクラス
@@ -18,6 +18,8 @@ public class ScoreSender : MonoBehaviour
     // スコアがすでに送信されたかどうかを管理するフラグ
     private bool hasSubmittedScore = false;
 
+    private bool isGetting = false;
+
     private void Start()
     {
         // 初期メッセージを表示
@@ -31,31 +33,27 @@ public class ScoreSender : MonoBehaviour
     /// <param name="score">プレイヤーのスコア</param>
     public void SendScore(string playerName, int score)
     {
-        // プレイヤーの名前が空白の場合はエラーメッセージを表示して処理を終了
+        SendScoreAsync(playerName, score).Forget();
+    }
+
+    private async UniTask SendScoreAsync(string playerName, int score)
+    {
         if (string.IsNullOrWhiteSpace(playerName))
         {
             logText.text = GetLogText(SendScoreLog.NameNotEntered);
-            StartCoroutine(ResetTextField());
+            await ResetTextFieldAsync();
             return;
         }
-        // スコア送信のコルーチンを開始
-        StartCoroutine(SendScoreCoroutine(playerName, score));
-    }
 
-    /// <summary>
-    /// Google Apps Scriptにスコアを送信するコルーチン
-    /// </summary>
-    /// <param name="playerName">プレイヤーの名前</param>
-    /// <param name="score">プレイヤーのスコア</param>
-    private IEnumerator SendScoreCoroutine(string playerName, int score)
-    {
-        // すでにスコアが送信されている場合はエラーメッセージを表示して処理を終了
         if (hasSubmittedScore)
         {
             logText.text = GetLogText(SendScoreLog.AlreadySubmitted);
-            StartCoroutine(ResetTextField());
-            yield break;
+            await ResetTextFieldAsync();
+            return;
         }
+
+        if (isGetting) return;
+        isGetting = true;
 
         // スコア送信中のメッセージを表示
         logText.text = GetLogText(SendScoreLog.Sending);
@@ -79,31 +77,37 @@ public class ScoreSender : MonoBehaviour
         // リクエストのヘッダーにContent-Typeを設定
         request.SetRequestHeader("Content-Type", "application/json");
 
-        // リクエストを送信し、レスポンスが返ってくるまで待機
-        yield return request.SendWebRequest();
+        try
+        {
+            await request.SendWebRequest()
+                .WithCancellation(this.GetCancellationTokenOnDestroy());
 
-        // リクエストの結果に応じてメッセージを表示
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            // スコア送信成功のメッセージを表示し、スコアが送信されたことを記録
-            logText.text = GetLogText(SendScoreLog.Successfully);
-            hasSubmittedScore = true;
-            StartCoroutine(ResetTextField());
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                logText.text = GetLogText(SendScoreLog.Successfully);
+                hasSubmittedScore = true;
+            }
+            else
+            {
+                Debug.LogWarning(request.error);
+                logText.text = GetLogText(SendScoreLog.Failed);
+            }
+
+            await ResetTextFieldAsync();
         }
-        else
+        finally
         {
-            // スコア送信失敗のメッセージを表示
-            logText.text = GetLogText(SendScoreLog.Failed);
-            StartCoroutine(ResetTextField());
+            isGetting = false;
         }
     }
 
-    /// <summary>
-    /// ログテキストを一定時間後にリセットするコルーチン
-    /// </summary>
-    private IEnumerator ResetTextField()
+    private async UniTask ResetTextFieldAsync()
     {
-        yield return new WaitForSeconds(2.0f);
+        await UniTask.Delay(
+            2000,
+            cancellationToken: this.GetCancellationTokenOnDestroy()
+        );
+
         logText.text = GetLogText(SendScoreLog.FirstSentence);
     }
 

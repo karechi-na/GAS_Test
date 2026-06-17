@@ -49,6 +49,9 @@ public class TitleSceneManager : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// Time.timeScale‚ðƒŠƒZƒbƒg
+    /// </summary>
     private void TimeScaleReset()
     {
         Time.timeScale = DEFAULT_TIME_SCALE;

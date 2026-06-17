@@ -20,6 +20,7 @@ public class CollisionMonitoring : MonoBehaviour
             if (other.TryGetComponent(out Item item))
                 ScoreManager.Instance.AddScore(item.Point);
 
+            // SEをワンショット再生
             AudioManager.Instance.PlaySE(SoundEffect_Key.COLLISION_SE);
 
             // アイテムをプールに戻す

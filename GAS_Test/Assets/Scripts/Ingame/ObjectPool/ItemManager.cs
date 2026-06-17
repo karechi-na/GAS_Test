@@ -6,7 +6,9 @@ using UnityEngine;
 /// </summary>
 public class ItemManager : MonoBehaviour
 {
-    // フェーズごとの有効化されるアイテムの数を管理する辞書
+    /// <summary>
+    /// フェーズごとの有効化されるアイテムの数を管理する辞書
+    /// </summary>
     private readonly Dictionary<InGamePhase, int> PHASE_COUNT_DICTIONARY = new Dictionary<InGamePhase, int>()
     {
         {InGamePhase.Phase1, 3},
@@ -52,6 +54,7 @@ public class ItemManager : MonoBehaviour
     /// </summary>
     private void PhaseChange(InGamePhase newPhase)
     {
+        // 最大数を更新後のフェーズに合わせて変更
         instanceMaxCount = PHASE_COUNT_DICTIONARY[newPhase];
         RefillItem();
     }
