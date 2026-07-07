@@ -1,4 +1,4 @@
-# GAS_Test 
+# このリポジトリについて
 
 > Google Apps Scriptを利用したオンラインランキングシステムの検証プロジェクト
 
@@ -7,7 +7,7 @@
 ## 目次
 - [概要](#概要)
 - [制作背景](#制作背景)
-- [使用技術](#各使用技術)
+- [各使用技術](#各使用技術)
 - [ゲーム内容](#ゲーム内容)
 - [実装した機能](#実装した機能)
 - [システム構成](#システム構成)
@@ -35,6 +35,21 @@ Googleスプレッドシートをデータベースとして利用し、スコ�
 ## ゲーム内容
 落下してくるオブジェクトを取得し、スコアを競うシンプルなゲームです。
 ランキング機能の検証を目的として制作しているため、通信機能の実装に重点を置いています。
+### ゲームのフローチャート
+```mermaid
+flowchart TD
+    A[タイトル]
+    B[ゲーム本編]
+    C[ScoreScene]
+
+    A --> B
+    B --> C
+
+    C -.-> D[ランキング取得]
+    C -.-> E[スコア送信]
+
+    C --> A
+```
 
 ## 実装した機能
 - Google Apps Scriptへのスコア送信
@@ -49,27 +64,53 @@ Googleスプレッドシートをデータベースとして利用し、スコ�
 
 ## システム構成
 ### ランキング登録の流れ
-1. **スコアを送信**
-> ゲーム終了後、プレイヤー名を入力してスコアを送信します。  
-> UnityではUnityWebRequestを利用して、プレイヤー名とスコアをJSON形式に変換し、Google Apps ScriptへPOST通信を行います。
-> <img src="Docs/scorePost.png" width="300"> *名前をInputFieldに入力後、フィールド右側のボタンでPOST通信開始
+#### 送信
+<table>
+    <tr>
+        <td width="65%">
+1. スコアを送信<br>
+ゲーム終了後、プレイヤー名を入力してスコアを送信します。<br>
+UnityではUnityWebRequestを利用して、プレイヤー名とスコアをJSON形式に変換し、Google Apps ScriptへPOST通信を行います。<br><br>
+2.Google Apps Scriptでデータを保存<br> 
+受け取ったJSONデータを解析し、Googleスプレッドシートへランキングデータとして保存します。<br>
+Google Apps Scriptを仲介することで、サーバーを用意せずにオンラインランキングを実装しています。
+        </td>
+        <td width="35%">
+<p>
+<img src="Docs/scorePost.png" width="300">
+</p>
+<p>
+    <sub>名前をInputFieldに入力後、フィールド右側の「Send Score」ボタンでPOST通信開始</sub>
+</p>
+        </td>
+    </tr>
+</table>
 
-2. **Google Apps Scriptでデータを保存**
-> 受け取ったJSONデータを解析し、Googleスプレッドシートへランキングデータとして保存します。  
-> Google Apps Scriptを仲介することで、サーバーを用意せずにオンラインランキングを実装しています。
-
-3. **ランキングを取得**
-> GetRankingボタンを押すとGoogle Apps ScriptへGET通信を行い、Googleスプレッドシートから上位10人のランキングデータを取得します。  
-> 取得したJSONデータをUnity側で解析し、ランキングUIへ反映します。
-
-4. **ランキング表示**
-> 取得したランキングをスコア順に表示します。  
-> 通信処理にはUniTaskを採用し、オブジェクト破棄時にはWithCancellation()によって安全に通信を終了する設計になっています。
-> <img src="Docs/rankingGet2.png" width="300"> *スコア送信後再度ランキングを取得したとき
+#### 受信
+<table>
+    <tr>
+        <td width="65%">
+3.ランキングを取得<br>
+GetRankingボタンを押すとGoogle Apps ScriptへGET通信を行い、Googleスプレッドシートから上位10人のランキングデータを取得します。<br>
+取得したJSONデータをUnity側で解析し、ランキングUIへ反映します。<br><br>
+4.ランキング表示<br>
+取得したランキングをスコア順に表示します。<br>
+通信処理にはUniTaskを採用し、オブジェクト破棄時にはWithCancellation()によって安全に通信を終了する設計になっています。
+        </td>
+        <td width="35%">
+<p>
+ <img src="Docs/rankingGet2.png" width="300">
+</p>
+<p>
+    <sub>スコア送信後再度ランキングを取得したとき</sub>
+</p>
+        </td>
+    </tr>
+</table>
 
 **通信処理のイメージ**  
 ```mermaid
-graph LR
+graph TD
     A[Unity] -->|POST| B[Google Apps Script]
     B --> C[Google Spreadsheet]
     C --> B
