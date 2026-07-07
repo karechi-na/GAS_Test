@@ -1,8 +1,8 @@
-# GAS_Test (ゲームタイトル：BEST!!!)
+# GAS_Test 
 
-Google Apps Script（GAS）の学習・検証用リポジトリです。
+> Google Apps Scriptを利用したオンラインランキングシステムの検証プロジェクト
 
-<img src="Docs/titleImage.png" width="450"> *タイトル画面
+<img src="Docs/titleImage.png" width="450"> *タイトル画面(ゲームタイトル：BEST!!!)
 
 ## 目次
 - [概要](#概要)
@@ -87,5 +87,11 @@ graph LR
 - オブジェクト破棄時はWithCancellationで安全に通信終了
 - Enumでログ管理し文字列の散在を防止
 - 二重送信防止
-- 通信処理とUI表示を分離
+- 通信処理とUI表示をクラスごとに責務分離し、保守性を向上
+
+## 学んだこと
+- Google Apps ScriptとUnity間の通信
+- JSONによるデータの受け渡し
+- Googleスプレッドシートを利用したデータ管理
+- UniTaskを利用した非同期処理
 
